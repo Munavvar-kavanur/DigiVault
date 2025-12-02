@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -109,145 +110,211 @@ class _PasswordDetailScreenState extends State<PasswordDetailScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
                     children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          gradient: LinearGradient(
-                            colors:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? [
-                                    Theme.of(context).cardTheme.color!,
-                                    Theme.of(
-                                      context,
-                                    ).cardTheme.color!.withOpacity(0.8),
-                                  ]
-                                : [Colors.white, Colors.grey.shade50],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primaryContainer.withOpacity(0.3),
-                                shape: BoxShape.circle,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(32),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(32),
+                            decoration: BoxDecoration(
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? const Color(0xFF0F172A).withOpacity(0.2)
+                                  : Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(32),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? 0.08
+                                      : 0.3,
+                                ),
+                                width: 1.5,
                               ),
-                              child: Center(
-                                child: Text(
-                                  currentEntry.title.isNotEmpty
-                                      ? currentEntry.title[0].toUpperCase()
-                                      : '?',
-                                  style: TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withOpacity(0.1),
+                                  blurRadius: 30,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.onPrimaryContainer,
+                                    ).colorScheme.primary.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary.withOpacity(0.2),
+                                      width: 2,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withOpacity(0.2),
+                                        blurRadius: 20,
+                                        spreadRadius: 5,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      currentEntry.title.isNotEmpty
+                                          ? currentEntry.title[0].toUpperCase()
+                                          : '?',
+                                      style: TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  currentEntry.title,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.5,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    currentEntry.username,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                          fontSize: 14,
+                                        ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              currentEntry.title,
-                              style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              currentEntry.username,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(color: Colors.grey.shade600),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: Theme.of(context).cardTheme.color,
-                          border: Border.all(
-                            color: Theme.of(
-                              context,
-                            ).dividerColor.withOpacity(0.1),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? const Color(0xFF0F172A).withOpacity(0.2)
+                                  : Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? 0.08
+                                      : 0.3,
+                                ),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                _buildDetailTile(
+                                  context,
+                                  icon: LucideIcons.user,
+                                  title: 'Username',
+                                  value: currentEntry.username,
+                                ),
+                                Divider(
+                                  height: 1,
+                                  color: Theme.of(
+                                    context,
+                                  ).dividerColor.withOpacity(0.1),
+                                ),
+                                _buildPasswordTile(
+                                  context,
+                                  currentEntry.password,
+                                ),
+                                if (currentEntry.website != null &&
+                                    currentEntry.website!.isNotEmpty) ...[
+                                  Divider(
+                                    height: 1,
+                                    color: Theme.of(
+                                      context,
+                                    ).dividerColor.withOpacity(0.1),
+                                  ),
+                                  _buildDetailTile(
+                                    context,
+                                    icon: LucideIcons.globe,
+                                    title: 'Website',
+                                    value: currentEntry.website!,
+                                  ),
+                                ],
+                                if (currentEntry.category != null &&
+                                    currentEntry.category!.isNotEmpty) ...[
+                                  Divider(
+                                    height: 1,
+                                    color: Theme.of(
+                                      context,
+                                    ).dividerColor.withOpacity(0.1),
+                                  ),
+                                  _buildDetailTile(
+                                    context,
+                                    icon: LucideIcons.tag,
+                                    title: 'Category',
+                                    value: currentEntry.category!,
+                                  ),
+                                ],
+                                if (currentEntry.notes != null &&
+                                    currentEntry.notes!.isNotEmpty) ...[
+                                  Divider(
+                                    height: 1,
+                                    color: Theme.of(
+                                      context,
+                                    ).dividerColor.withOpacity(0.1),
+                                  ),
+                                  _buildDetailTile(
+                                    context,
+                                    icon: LucideIcons.stickyNote,
+                                    title: 'Notes',
+                                    value: currentEntry.notes!,
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildDetailTile(
-                              context,
-                              icon: LucideIcons.user,
-                              title: 'Username',
-                              value: currentEntry.username,
-                            ),
-                            Divider(
-                              height: 1,
-                              color: Theme.of(
-                                context,
-                              ).dividerColor.withOpacity(0.1),
-                            ),
-                            _buildPasswordTile(context, currentEntry.password),
-                            if (currentEntry.website != null &&
-                                currentEntry.website!.isNotEmpty) ...[
-                              Divider(
-                                height: 1,
-                                color: Theme.of(
-                                  context,
-                                ).dividerColor.withOpacity(0.1),
-                              ),
-                              _buildDetailTile(
-                                context,
-                                icon: LucideIcons.globe,
-                                title: 'Website',
-                                value: currentEntry.website!,
-                              ),
-                            ],
-                            if (currentEntry.category != null &&
-                                currentEntry.category!.isNotEmpty) ...[
-                              Divider(
-                                height: 1,
-                                color: Theme.of(
-                                  context,
-                                ).dividerColor.withOpacity(0.1),
-                              ),
-                              _buildDetailTile(
-                                context,
-                                icon: LucideIcons.tag,
-                                title: 'Category',
-                                value: currentEntry.category!,
-                              ),
-                            ],
-                            if (currentEntry.notes != null &&
-                                currentEntry.notes!.isNotEmpty) ...[
-                              Divider(
-                                height: 1,
-                                color: Theme.of(
-                                  context,
-                                ).dividerColor.withOpacity(0.1),
-                              ),
-                              _buildDetailTile(
-                                context,
-                                icon: LucideIcons.stickyNote,
-                                title: 'Notes',
-                                value: currentEntry.notes!,
-                              ),
-                            ],
-                          ],
                         ),
                       ),
                       const SizedBox(height: 40),

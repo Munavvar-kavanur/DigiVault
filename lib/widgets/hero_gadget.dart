@@ -30,14 +30,14 @@ class HeroGadget extends StatelessWidget {
             gradient: LinearGradient(
               colors: isDark
                   ? [
-                      const Color(
-                        0xFF0F172A,
-                      ).withOpacity(0.4), // Darker, more transparent
-                      const Color(0xFF0F172A).withOpacity(0.2),
+                      const Color(0xFF0F172A).withOpacity(
+                        0.2,
+                      ), // Reduced opacity for better visibility
+                      const Color(0xFF0F172A).withOpacity(0.1),
                     ]
                   : [
-                      Colors.white.withOpacity(0.4),
-                      Colors.white.withOpacity(0.1),
+                      Colors.white.withOpacity(0.2),
+                      Colors.white.withOpacity(0.05),
                     ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
