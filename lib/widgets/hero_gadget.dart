@@ -30,24 +30,34 @@ class HeroGadget extends StatelessWidget {
             gradient: LinearGradient(
               colors: isDark
                   ? [
-                      const Color(0xFF0F172A).withOpacity(
-                        0.2,
-                      ), // Reduced opacity for better visibility
+                      const Color(0xFF0F172A).withOpacity(0.2),
                       const Color(0xFF0F172A).withOpacity(0.1),
                     ]
                   : [
-                      Colors.white.withOpacity(0.2),
-                      Colors.white.withOpacity(0.05),
+                      Colors.white.withOpacity(
+                        0.8,
+                      ), // Much brighter for light mode
+                      Colors.white.withOpacity(0.6),
                     ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
-              color: Colors.white.withOpacity(isDark ? 0.08 : 0.3),
+              color: isDark
+                  ? Colors.white.withOpacity(0.2)
+                  : Colors.white.withOpacity(
+                      0.9,
+                    ), // Crisper border for light mode
               width: 1.5,
             ),
             boxShadow: [
+              BoxShadow(
+                color: primaryColor.withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 0), // Center glow
+                spreadRadius: 1,
+              ),
               BoxShadow(
                 color: primaryColor.withOpacity(0.1),
                 blurRadius: 30,
