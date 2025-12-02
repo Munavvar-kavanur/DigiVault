@@ -312,6 +312,22 @@ class _PasswordDetailScreenState extends State<PasswordDetailScreen> {
                                     value: currentEntry.notes!,
                                   ),
                                 ],
+                                if (currentEntry.lastModified != null) ...[
+                                  Divider(
+                                    height: 1,
+                                    color: Theme.of(
+                                      context,
+                                    ).dividerColor.withOpacity(0.1),
+                                  ),
+                                  _buildDetailTile(
+                                    context,
+                                    icon: LucideIcons.clock,
+                                    title: 'Last Edited',
+                                    value: _formatDate(
+                                      currentEntry.lastModified!,
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -327,6 +343,10 @@ class _PasswordDetailScreenState extends State<PasswordDetailScreen> {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
   Widget _buildDetailTile(

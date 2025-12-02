@@ -260,7 +260,7 @@ function doPost(e) {
       
       // Construct row data based on headers to ensure order
       const rowData = headers.map(header => {
-        if (header === 'lastModified') return new Date().toISOString();
+        if (header === 'lastModified') return entry['lastModified'] || new Date().toISOString();
         return entry[header] || '';
       });
       

@@ -31,8 +31,18 @@ class PasswordProvider with ChangeNotifier {
       // Load local data first for speed
       _entries = await _storageService.readAll();
       _categories = await _storageService.readCategories();
+    } catch (e) {
+      print('Error loading local data: $e');
+      _entries = [];
+      _categories = [];
+    } finally {
+      // Show local data immediately
+      _isLoading = false;
+      notifyListeners();
+    }
 
-      // Check for Sheets URL
+    try {
+      // Check for Sheets URL and sync in background
       final sheetsUrl = await _storageService.readSheetsUrl();
       if (sheetsUrl != null) {
         _sheetsService.setUrl(sheetsUrl);
@@ -42,12 +52,7 @@ class PasswordProvider with ChangeNotifier {
         _startAutoSync();
       }
     } catch (e) {
-      print('Error loading data: $e');
-      _entries = [];
-      _categories = [];
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      print('Error during background sync: $e');
     }
   }
 
@@ -87,7 +92,17 @@ class PasswordProvider with ChangeNotifier {
         await _storageService.write(_entries);
       }
 
-      // 3. Robust Category Sync
+      // 3. Push Local-only entries to Cloud
+      // If we have entries locally that aren't in the cloud, we should push them.
+      final cloudIds = cloudEntries.map((e) => e.id).toSet();
+      for (var localEntry in _entries) {
+        if (!cloudIds.contains(localEntry.id)) {
+          print('Pushing local entry to cloud: ${localEntry.title}');
+          await _sheetsService.syncEntry(localEntry);
+        }
+      }
+
+      // 4. Robust Category Sync
       // Infer categories from passwords (in case Categories sheet is empty/outdated)
       final Set<String> allCategories = Set.from(_categories);
       allCategories.addAll(cloudCategories);
@@ -103,7 +118,7 @@ class PasswordProvider with ChangeNotifier {
       _categories = allCategories.toList()..sort();
       await _storageService.writeCategories(_categories);
 
-      // 4. Push back to Cloud (Self-healing)
+      // 5. Push back to Cloud (Self-healing)
       // If we found categories locally or in entries that weren't in the cloud list,
       // we should update the Cloud 'Categories' sheet.
       if (allCategories.length > cloudCategories.length) {
@@ -160,6 +175,7 @@ class PasswordProvider with ChangeNotifier {
   Future<void> updateEntry(PasswordEntry updatedEntry) async {
     final index = _entries.indexWhere((e) => e.id == updatedEntry.id);
     if (index != -1) {
+      updatedEntry.lastModified = DateTime.now();
       _entries[index] = updatedEntry;
       await _storageService.write(_entries);
       notifyListeners();
