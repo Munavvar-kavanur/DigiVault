@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../models/password_entry.dart';
 import '../providers/password_provider.dart';
 import '../utils/password_generator.dart';
+import '../widgets/neon_background.dart';
 
 class AddEditPasswordScreen extends StatefulWidget {
   final PasswordEntry? entry;
@@ -117,428 +118,397 @@ class _AddEditPasswordScreenState extends State<AddEditPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sectionColor = isDark
-        ? Colors.black.withOpacity(0.2)
-        : Colors.white.withOpacity(0.5);
-    final borderColor = isDark
-        ? Colors.white.withOpacity(0.1)
-        : Colors.black.withOpacity(0.05);
-
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-              border: Border(
-                top: BorderSide(color: Colors.white.withOpacity(0.2), width: 1),
-              ),
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  // Drag Handle
-                  Center(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 12, bottom: 8),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                            child: Row(
-                              children: [
-                                if (Navigator.canPop(context))
-                                  IconButton(
-                                    icon: const Icon(LucideIcons.x),
-                                    onPressed: () => Navigator.pop(context),
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.surface.withOpacity(0.5),
-                                    ),
-                                  ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Text(
-                                    widget.entry == null
-                                        ? 'Add Password'
-                                        : 'Edit Password',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+      body: NeonBackground(
+        child: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(LucideIcons.arrowLeft),
+                        onPressed: () => Navigator.pop(context),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surface.withOpacity(0.2),
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurface,
                         ),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24.0,
-                            ),
-                            child: Form(
-                              key: _formKey,
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        widget.entry == null ? 'Add Password' : 'Edit Password',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Credentials Section
+                        _buildSectionHeader(context, 'Credentials'),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF0F172A).withOpacity(0.2)
+                                    : Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? 0.08
+                                        : 0.3,
+                                  ),
+                                  width: 1.5,
+                                ),
+                              ),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Credentials Section
-                                  _buildSectionHeader(context, 'Credentials'),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: sectionColor,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: borderColor),
-                                    ),
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      children: [
-                                        _buildTextField(
-                                          controller: _titleController,
-                                          label: 'Title',
-                                          hint: 'e.g. Google',
-                                          icon: LucideIcons.type,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter a title';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 16),
-                                        _buildTextField(
-                                          controller: _usernameController,
-                                          label: 'Username/Email',
-                                          icon: LucideIcons.user,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter a username';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 16),
-                                        _buildTextField(
-                                          controller: _passwordController,
-                                          label: 'Password',
-                                          icon: LucideIcons.lock,
-                                          isPassword: true,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter a password';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        // Inline Password Generator
-                                        AnimatedSize(
-                                          duration: const Duration(
-                                            milliseconds: 300,
-                                          ),
-                                          curve: Curves.easeInOut,
-                                          child: _isGeneratorExpanded
-                                              ? Container(
-                                                  margin: const EdgeInsets.only(
-                                                    top: 16,
-                                                  ),
-                                                  padding: const EdgeInsets.all(
-                                                    16,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Theme.of(
-                                                      context,
-                                                    ).cardTheme.color,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                    border: Border.all(
-                                                      color: Theme.of(context)
-                                                          .dividerColor
-                                                          .withOpacity(0.1),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Generator',
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .titleSmall
-                                                                ?.copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Theme.of(
-                                                                    context,
-                                                                  ).colorScheme.primary,
-                                                                ),
-                                                          ),
-                                                          TextButton.icon(
-                                                            onPressed:
-                                                                _generatePassword,
-                                                            icon: const Icon(
-                                                              LucideIcons
-                                                                  .refreshCw,
-                                                              size: 14,
-                                                            ),
-                                                            label: const Text(
-                                                              'Regenerate',
-                                                              style: TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                            style: TextButton.styleFrom(
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        8,
-                                                                    vertical: 4,
-                                                                  ),
-                                                              minimumSize:
-                                                                  Size.zero,
-                                                              tapTargetSize:
-                                                                  MaterialTapTargetSize
-                                                                      .shrinkWrap,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 8),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            'Length: ${_generatorLength.toInt()}',
-                                                            style:
+                                  _buildTextField(
+                                    controller: _titleController,
+                                    label: 'Title',
+                                    hint: 'e.g. Google',
+                                    icon: LucideIcons.type,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a title';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTextField(
+                                    controller: _usernameController,
+                                    label: 'Username/Email',
+                                    icon: LucideIcons.user,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a username';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTextField(
+                                    controller: _passwordController,
+                                    label: 'Password',
+                                    icon: LucideIcons.lock,
+                                    isPassword: true,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a password';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  // Inline Password Generator
+                                  AnimatedSize(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                    child: _isGeneratorExpanded
+                                        ? Container(
+                                            margin: const EdgeInsets.only(
+                                              top: 16,
+                                            ),
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface
+                                                  .withOpacity(0.3),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              border: Border.all(
+                                                color: Theme.of(
+                                                  context,
+                                                ).dividerColor.withOpacity(0.1),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      'Generator',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleSmall
+                                                          ?.copyWith(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
                                                                 Theme.of(
                                                                       context,
                                                                     )
-                                                                    .textTheme
-                                                                    .bodySmall,
+                                                                    .colorScheme
+                                                                    .primary,
                                                           ),
-                                                          Expanded(
-                                                            child: SliderTheme(
-                                                              data:
-                                                                  SliderTheme.of(
-                                                                    context,
-                                                                  ).copyWith(
-                                                                    trackHeight:
-                                                                        2,
-                                                                    thumbShape:
-                                                                        const RoundSliderThumbShape(
-                                                                          enabledThumbRadius:
-                                                                              6,
-                                                                        ),
-                                                                  ),
-                                                              child: Slider(
-                                                                value:
-                                                                    _generatorLength,
-                                                                min: 8,
-                                                                max: 32,
-                                                                divisions: 24,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    _generatorLength =
-                                                                        value;
-                                                                    _generatePassword();
-                                                                  });
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      _buildCompactSwitch(
-                                                        'Uppercase',
-                                                        _useUppercase,
-                                                        (v) {
-                                                          setState(() {
-                                                            _useUppercase = v;
-                                                            _generatePassword();
-                                                          });
-                                                        },
-                                                      ),
-                                                      _buildCompactSwitch(
-                                                        'Numbers',
-                                                        _useNumbers,
-                                                        (v) {
-                                                          setState(() {
-                                                            _useNumbers = v;
-                                                            _generatePassword();
-                                                          });
-                                                        },
-                                                      ),
-                                                      _buildCompactSwitch(
-                                                        'Symbols',
-                                                        _useSymbols,
-                                                        (v) {
-                                                          setState(() {
-                                                            _useSymbols = v;
-                                                            _generatePassword();
-                                                          });
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              : const SizedBox.shrink(),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 24),
-
-                                  // Details Section
-                                  _buildSectionHeader(context, 'Details'),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: sectionColor,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: borderColor),
-                                    ),
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      children: [
-                                        _buildTextField(
-                                          controller: _websiteController,
-                                          label: 'Website',
-                                          hint: 'https://example.com',
-                                          icon: LucideIcons.globe,
-                                          keyboardType: TextInputType.url,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Consumer<PasswordProvider>(
-                                          builder: (context, provider, child) {
-                                            return DropdownButtonFormField<
-                                              String
-                                            >(
-                                              value: _selectedCategory,
-                                              decoration: InputDecoration(
-                                                labelText: 'Category',
-                                                prefixIcon: const Icon(
-                                                  LucideIcons.tag,
-                                                  size: 20,
-                                                ),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  borderSide: BorderSide.none,
-                                                ),
-                                                filled: true,
-                                                fillColor: Theme.of(
-                                                  context,
-                                                ).cardTheme.color,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 14,
                                                     ),
-                                              ),
-                                              items:
-                                                  {
-                                                    ...provider.categories,
-                                                    if (_selectedCategory !=
-                                                        null)
-                                                      _selectedCategory!,
-                                                  }.map((String category) {
-                                                    return DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value: category,
-                                                      child: Text(category),
-                                                    );
-                                                  }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _selectedCategory = newValue;
-                                                });
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(height: 16),
-                                        _buildTextField(
-                                          controller: _notesController,
-                                          label: 'Notes',
-                                          icon: LucideIcons.stickyNote,
-                                          maxLines: 3,
-                                        ),
-                                      ],
-                                    ),
+                                                    TextButton.icon(
+                                                      onPressed:
+                                                          _generatePassword,
+                                                      icon: const Icon(
+                                                        LucideIcons.refreshCw,
+                                                        size: 14,
+                                                      ),
+                                                      label: const Text(
+                                                        'Regenerate',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                      style: TextButton.styleFrom(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 4,
+                                                            ),
+                                                        minimumSize: Size.zero,
+                                                        tapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'Length: ${_generatorLength.toInt()}',
+                                                      style: Theme.of(
+                                                        context,
+                                                      ).textTheme.bodySmall,
+                                                    ),
+                                                    Expanded(
+                                                      child: SliderTheme(
+                                                        data:
+                                                            SliderTheme.of(
+                                                              context,
+                                                            ).copyWith(
+                                                              trackHeight: 2,
+                                                              thumbShape:
+                                                                  const RoundSliderThumbShape(
+                                                                    enabledThumbRadius:
+                                                                        6,
+                                                                  ),
+                                                            ),
+                                                        child: Slider(
+                                                          value:
+                                                              _generatorLength,
+                                                          min: 8,
+                                                          max: 32,
+                                                          divisions: 24,
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              _generatorLength =
+                                                                  value;
+                                                              _generatePassword();
+                                                            });
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                _buildCompactSwitch(
+                                                  'Uppercase',
+                                                  _useUppercase,
+                                                  (v) {
+                                                    setState(() {
+                                                      _useUppercase = v;
+                                                      _generatePassword();
+                                                    });
+                                                  },
+                                                ),
+                                                _buildCompactSwitch(
+                                                  'Numbers',
+                                                  _useNumbers,
+                                                  (v) {
+                                                    setState(() {
+                                                      _useNumbers = v;
+                                                      _generatePassword();
+                                                    });
+                                                  },
+                                                ),
+                                                _buildCompactSwitch(
+                                                  'Symbols',
+                                                  _useSymbols,
+                                                  (v) {
+                                                    setState(() {
+                                                      _useSymbols = v;
+                                                      _generatePassword();
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
                                   ),
-
-                                  const SizedBox(height: 32),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 56,
-                                    child: ElevatedButton(
-                                      onPressed: _save,
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                        ),
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                        foregroundColor: Colors.white,
-                                        elevation: 4,
-                                        shadowColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary.withOpacity(0.4),
-                                      ),
-                                      child: const Text(
-                                        'Save Password',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 40),
                                 ],
                               ),
                             ),
                           ),
                         ),
+
+                        const SizedBox(height: 24),
+
+                        // Details Section
+                        _buildSectionHeader(context, 'Details'),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF0F172A).withOpacity(0.2)
+                                    : Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? 0.08
+                                        : 0.3,
+                                  ),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  _buildTextField(
+                                    controller: _websiteController,
+                                    label: 'Website',
+                                    hint: 'https://example.com',
+                                    icon: LucideIcons.globe,
+                                    keyboardType: TextInputType.url,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Consumer<PasswordProvider>(
+                                    builder: (context, provider, child) {
+                                      return DropdownButtonFormField<String>(
+                                        value: _selectedCategory,
+                                        decoration: InputDecoration(
+                                          labelText: 'Category',
+                                          prefixIcon: const Icon(
+                                            LucideIcons.tag,
+                                            size: 20,
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          filled: true,
+                                          fillColor: Theme.of(context)
+                                              .colorScheme
+                                              .surface
+                                              .withOpacity(0.5),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 14,
+                                              ),
+                                        ),
+                                        items:
+                                            {
+                                              ...provider.categories,
+                                              if (_selectedCategory != null)
+                                                _selectedCategory!,
+                                            }.map((String category) {
+                                              return DropdownMenuItem<String>(
+                                                value: category,
+                                                child: Text(category),
+                                              );
+                                            }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            _selectedCategory = newValue;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTextField(
+                                    controller: _notesController,
+                                    label: 'Notes',
+                                    icon: LucideIcons.stickyNote,
+                                    maxLines: 3,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: _save,
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              foregroundColor: Colors.white,
+                              elevation: 4,
+                              shadowColor: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.4),
+                            ),
+                            child: const Text(
+                              'Save Password',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),

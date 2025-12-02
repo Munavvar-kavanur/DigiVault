@@ -4,6 +4,8 @@ import 'providers/password_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/splash_screen.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
@@ -27,6 +29,7 @@ class MyApp extends StatelessWidget {
     // Premium Light Theme
     final lightTheme = ThemeData(
       brightness: Brightness.light,
+      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
       colorScheme: ColorScheme.fromSeed(
         seedColor: const Color(0xFF6366F1), // Indigo
         brightness: Brightness.light,
@@ -66,6 +69,7 @@ class MyApp extends StatelessWidget {
     // Premium Dark Theme
     final darkTheme = ThemeData(
       brightness: Brightness.dark,
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       colorScheme: ColorScheme.fromSeed(
         seedColor: const Color(0xFF818CF8), // Indigo 400
         brightness: Brightness.dark,
